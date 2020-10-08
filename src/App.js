@@ -1018,6 +1018,7 @@ decrypt_to_plain(event){
       {console.log(this.state)}
       
      <h2>JUST TO CHECK THAT COMMIT IS WORKING</h2>
+     <h2>yes it is really WORKING</h2>
       </div>
     );
   }
