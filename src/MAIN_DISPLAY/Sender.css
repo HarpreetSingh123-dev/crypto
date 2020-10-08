@@ -1,0 +1,24 @@
+.main_sender .container{
+
+   
+    border: 1px solid black;
+    width: 500px;
+    height: 600px;
+}
+
+.cipher_set{
+
+    position: relative;
+    top: 20px;
+}
+
+.cipher_text{
+
+    border: 1px solid black;
+}
+
+.send_button{
+
+    position: relative;
+    top: 90px;
+}
