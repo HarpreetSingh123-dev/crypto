@@ -58,14 +58,12 @@ function Sender(props) {
                         
                         <div className="cipher_set">
                         <div class="form-group">
-                            <label for="cipher"><b>CIPHER TEXT:</b></label>
-                            <br></br>
-                        
                             <div>
-                            {props.cipher_text}
+                            <label for="cipher"><b>CIPHER TEXT:</b>{props.cipher_text}</label>
                             </div>
+                            <br></br>
                             <div>
-                            {props.sha}
+                            <label for="sha"><b>SHA VALUE:</b>{props.sha}</label>
                             </div>
                         
                         </div>

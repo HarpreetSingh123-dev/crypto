@@ -23,7 +23,7 @@ class App extends Component {
                           decrtpted_text:'',
                           /*FOR MONO ONLY */
                           mono_key:'',
-                          /////////////////
+                          //////////////////
                           sha_sender:'',
                           sha_receiver:''
                          }
@@ -71,15 +71,18 @@ submit_for_encryption(event) {
    }
 ///////////////////////////////////////////////////////////////////////////////////////////           
               event.preventDefault()
+              var for_sha_plain = this.state.plaintext
+              var sha_of_plain_text = sha256(for_sha_plain)
+              this.setState({sha_sender:sha_of_plain_text})
 ///////////////// CEASER CIPHER ENCRYPTION BELOW //////////////////////////////////////////          
                   if(this.state.technique=='caesercipher') { 
                      var l =""
                      var text = this.state.plaintext
                      var amount = this.state.key;
                      var shift = parseInt(amount)
-                     var sha = sha256(text)
-                     this.setState({sha_sender:sha})
-                     console.log(sha)
+                     //var sha = sha256(text)
+                     //this.setState({sha_sender:sha})
+                     //console.log(sha)
                      encrypt(text, shift)
                      function encrypt(text, shift) {
                       var result = "";
@@ -527,6 +530,48 @@ submit_for_encryption(event) {
               this.setState({cipher:columnar_cipher})
             }
 
+/////////////////////////////RC4 ENCRYPTION BELOW////////////////////////////////////////////
+
+         if(this.state.technique=="rc4"){
+
+            var plain_text_for_rc4 = this.state.plaintext
+            var key_for_rc4 = this.state.key
+
+            var key = key_for_rc4
+            var str = plain_text_for_rc4
+
+            var rc4_encrypted_text =""
+
+            rc4(key,str)
+
+            function rc4(key, str) {
+              var s = [], j = 0, x, res = '';
+              for (var i = 0; i < 256; i++) {
+                s[i] = i;
+              }
+              for (i = 0; i < 256; i++) {
+                j = (j + s[i] + key.charCodeAt(i % key.length)) % 256;
+                x = s[i];
+                s[i] = s[j];
+                s[j] = x;
+              }
+              i = 0;
+              j = 0;
+              for (var y = 0; y < str.length; y++) {
+                i = (i + 1) % 256;
+                j = (j + s[i]) % 256;
+                x = s[i];
+                s[i] = s[j];
+                s[j] = x;
+                res += String.fromCharCode(str.charCodeAt(y) ^ s[(s[i] + s[j]) % 256]);
+              }
+              rc4_encrypted_text = res;
+              console.log(rc4_encrypted_text)
+            }
+
+          this.setState({cipher:rc4_encrypted_text})
+
+         }
           
 }
 
@@ -973,6 +1018,49 @@ decrypt_to_plain(event){
       this.setState({decrtpted_text:decrpyted_otp})
       
        }
+
+///////////////////////////////// RC4 DECRYPTION BELOW//////////////////////////
+
+     if(this.state.rec_tech=='rc4'){
+      
+       var cipher_text= this.state.rec_cipher
+       var rc4_key = this.state.rec_key
+
+       var decrypted_rc4 =""
+
+       var key = rc4_key
+       var str = cipher_text 
+
+       rc4(key,str)
+
+       function rc4(key, str) {
+        var s = [], j = 0, x, res = '';
+        for (var i = 0; i < 256; i++) {
+          s[i] = i;
+        }
+        for (i = 0; i < 256; i++) {
+          j = (j + s[i] + key.charCodeAt(i % key.length)) % 256;
+          x = s[i];
+          s[i] = s[j];
+          s[j] = x;
+        }
+        i = 0;
+        j = 0;
+        for (var y = 0; y < str.length; y++) {
+          i = (i + 1) % 256;
+          j = (j + s[i]) % 256;
+          x = s[i];
+          s[i] = s[j];
+          s[j] = x;
+          res += String.fromCharCode(str.charCodeAt(y) ^ s[(s[i] + s[j]) % 256]);
+        }
+        decrypted_rc4 = res;
+        console.log(decrypted_rc4)
+      }
+
+ this.setState({decrtpted_text:decrypted_rc4})
+
+     }
       
       
       
