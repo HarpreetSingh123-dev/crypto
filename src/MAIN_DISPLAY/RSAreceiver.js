@@ -14,12 +14,12 @@ function RSAreceiver(props) {
             <div class="form-group">
             
             <div>
-    <label for="rsa_cipher"><b>CIPHER TEXT:</b>{props.happy}</label>
+    <label for="rsa_cipher"><b>CIPHER TEXT:</b></label>
             </div>
 
             <div>
  
-            <label for="rsa_cipher"><b>PRIVATE KEY:</b></label>
+    <label for="rsa_cipher"><b>PRIVATE KEY:</b>{props.pri}</label>
 
             </div>
             

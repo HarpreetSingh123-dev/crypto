@@ -37,7 +37,7 @@ class App extends Component {
                         rsa_pri_key:'',
                         rsa_cipher_text:'',
                         rsa_decrypted_cipher:'',
-                        exponent:''
+                        power:''
                          }
   
        this.submit_for_encryption=this.submit_for_encryption.bind(this)
@@ -48,7 +48,10 @@ class App extends Component {
        this.decrypt_to_plain=this.decrypt_to_plain.bind(this)
        ///////////////BELOW IS FOR RSA/////////////////
        this.rsa_generate_keys=this.rsa_generate_keys.bind(this)
-       this.keys=this.keys.bind(this)
+       
+       this.rsa_text=this.rsa_text.bind(this)
+
+       this.rsa_encryption=this.rsa_encryption.bind(this)
 }
 
 
@@ -67,8 +70,8 @@ tech(event){
            
 }
 
-rsa_text(){
-
+rsa_text(event){
+  this.setState({rsa_plaintext: event.target.value})
 }
 
 
@@ -1091,6 +1094,10 @@ rsa_generate_keys(event){
     var pub=""
     var pri =""
     var exp  =""
+    var l =""
+    var t =""
+    var m =""
+    var n =""
   const bigInt = require('big-integer')
 
  function randomPrime(bits) {
@@ -1142,30 +1149,91 @@ rsa_generate_keys(event){
     exp = e.value
     pub = n.value
     pri = d.value
-    
+    //console.log(pub)
+    //console.log( typeof(pub))
+    l = pub.toString()
+    m = pri.toString()
+    n = exp.toString()
+  console.log(pub)
+     
+   //console.log(typeof(n)) //console.log(typeof(l))  
+   //console.log(l)
+   
+    //t = bigInt(l)
+    //console.log(t) 
+
+ //   if(pub===t.value)
+  // console.log("they are same bro")
   }
 
-  console.log(exp)
-  console.log(pub)
-  console.log(pri)
+  //console.log(exp)
+ // console.log(pub)
+  //console.log(pri)
 
-  this.setState({rsapubkey:pub})
-  this.setState({rsa_pri_key:pri})
-  this.setState({exponent:exp})
+  //this.setState({rsapubkey:pub})
+  //this.setState({rsa_pri_key:pri})
+  //this.setState({exponent:exp})
+  this.setState({power:"65537"})
+ this.setState({rsapubkey:l})
+ this.setState({rsa_pri_key:m})
  
 
+
+
+ //console.log(exp)
+//console.log(this.state.rsapubkey)
+//console.log(this.state.rsa_pri_key)
+//console.log(this.state.exponent)
 }
 
-keys(event){
+
+rsa_encryption(event){
+  
   event.preventDefault()
-  //alert(this.state.rsa_pub_key)
-     console.log(this.state.rsapubkey)
-      console.log(this.state.rsa_pri_key)
-      console.log(this.state.exponent)
+  const bigInt = require('big-integer')
+  var e = bigInt(65537)
 
+  var encrypted_message=""
+  
+  
+  
+  var plaintext = this.state.rsa_plaintext
+  
+  var convert_key = this.state.rsapubkey
+  
+  var key = bigInt(convert_key)
+  
+  var encoded_message =""
+  
+  console.log(key)
+
+  encode(plaintext)
+  
+  function encode(str) {
+    var h =""
+    const codes = str
+      .split('')
+      .map(i => i.charCodeAt())
+      .join('');
+
+    h= bigInt(codes);
+
+    encoded_message =h
+  }
+    
+    console.log(encoded_message)
+
+   encrypt(encoded_message,key,e)
+  function encrypt(encodedMsg, n, e) {
+  
+    var b =""
+    b = bigInt(encodedMsg).modPow(e, n);
+    
+    encrypted_message=b
+    console.log("encrypted message is"+ encrypted_message)
+  }
 }
 
-       
 
   render() {
 
@@ -1213,7 +1281,9 @@ keys(event){
           <div className="col-lg-6">
       
               <RSA_SENDER
-              happy={this.state.rsapubkey}
+              pub={this.state.rsapubkey}
+              rsa_text_change={this.rsa_text}
+              rsa_encrypt={this.rsa_encryption}
             
               ></RSA_SENDER>
          </div>
@@ -1221,16 +1291,19 @@ keys(event){
          <div className="col-lg-6">
         
              <RSA_RECEIVER
-             happy={this.state.rsapubkey}
+
+             pri={this.state.rsa_pri_key}
+            
              ></RSA_RECEIVER>
          </div>
       
     </div>
 
       </div>
-      {this.state.rsa_pub_key}
-      {this.state.rsa_pri_key}
-      {this.state.exponent}
+  {/*  <div>  {this.state.rsapubkey}</div>
+<div>{this.state.rsa_pri_key}</div>*/}
+<div>{console.log(this.state)}</div>
+    
      
       </div>
     );

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './RSAsender.css'
 
 function RSAsender(props) {
+
+    
     return (
         <div>
             
@@ -12,15 +14,15 @@ function RSAsender(props) {
             <form>
                         <div class="form-group">
                             <label for="enter_plain_text"><b>ENTER PLAIN TEXT:</b></label>
-                            <input type="text" class="form-control" id="text" onChange={props.text_change} style={{'text-transform':'uppercase'}}></input>
+                            <input type="text" class="form-control" id="text" onChange={props.rsa_text_change} style={{'text-transform':'uppercase'}}></input>
                         </div>
 
                         <div>
-                            <label for="public_key"><b>PUBLIC KEY:</b>{props.happy}</label>
+                            <label for="public_key"><b>PUBLIC KEY:</b>{props.pub}</label>
                         </div>
   
                         <div>
-                        <button  class="btn btn-primary" onClick={props.sender_submit}>ENCRYPT</button>
+                        <button  class="btn btn-primary" onClick={props.rsa_encrypt}>ENCRYPT</button>
                         </div>
 
                         <div>
