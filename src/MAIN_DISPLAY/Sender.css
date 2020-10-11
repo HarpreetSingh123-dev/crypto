@@ -2,8 +2,8 @@
 
    
     border: 1px solid black;
-    width: 500px;
-    height: 600px;
+    width: 700px;
+   
 }
 
 .cipher_set{
@@ -20,5 +20,17 @@
 .send_button{
 
     position: relative;
-    top: 90px;
+   
+}
+/*
+.sha-set{
+
+    overflow: scroll;
+    width:200px;
+}
+*/
+.rsa{
+
+    position: relative;
+    top: 100px;
 }

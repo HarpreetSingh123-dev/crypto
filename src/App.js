@@ -5,6 +5,9 @@ import './App.css';
 import Sender from './MAIN_DISPLAY/Sender'
 import Receiver from './MAIN_DISPLAY/Receiver'
 import sha256  from 'sha256'
+import RSA_SENDER from './MAIN_DISPLAY/RSAsender'
+import RSA_RECEIVER from './MAIN_DISPLAY/RSAreceiver'
+
 
 
 class App extends Component {
@@ -25,7 +28,16 @@ class App extends Component {
                           mono_key:'',
                           //////////////////
                           sha_sender:'',
-                          sha_receiver:''
+                          sha_receiver:'',
+
+                        //// BELOW STATES ARE ONLY USED FOR RSA //////////////////
+
+                        rsa_plaintext:'',
+                        rsapubkey:'',
+                        rsa_pri_key:'',
+                        rsa_cipher_text:'',
+                        rsa_decrypted_cipher:'',
+                        exponent:''
                          }
   
        this.submit_for_encryption=this.submit_for_encryption.bind(this)
@@ -34,6 +46,9 @@ class App extends Component {
        this.tech=this.tech.bind(this)
        this.send=this.send.bind(this)
        this.decrypt_to_plain=this.decrypt_to_plain.bind(this)
+       ///////////////BELOW IS FOR RSA/////////////////
+       this.rsa_generate_keys=this.rsa_generate_keys.bind(this)
+       this.keys=this.keys.bind(this)
 }
 
 
@@ -52,6 +67,12 @@ tech(event){
            
 }
 
+rsa_text(){
+
+}
+
+
+
 
 submit_for_encryption(event) {
 
@@ -62,9 +83,7 @@ submit_for_encryption(event) {
     
   }
 
-  if(this.state.key===""){
-   alert("please enter key")
-  }
+
 
   if(this.state.technique===""){
     alert("please enter technique")
@@ -1066,6 +1085,86 @@ decrypt_to_plain(event){
       
 }
 
+rsa_generate_keys(event){
+
+  event.preventDefault()
+    var pub=""
+    var pri =""
+    var exp  =""
+  const bigInt = require('big-integer')
+
+ function randomPrime(bits) {
+    const min = bigInt.one.shiftLeft(bits - 1);
+    const max = bigInt.one.shiftLeft(bits).prev();
+    
+    while (true) {
+      let p = bigInt.randBetween(min, max);
+      if (p.isProbablePrime(256)) {
+        return p;
+      } 
+    }
+  }
+
+  generate(250)
+
+  function generate(keysize) {
+    var e = bigInt(65537);
+    let p;
+    let q;
+    let totient;
+
+    
+  
+    do {
+      console.log("here")
+      p = randomPrime(keysize / 2);
+      q = randomPrime(keysize / 2);
+      
+      totient = bigInt.lcm(
+        p.prev(),
+        q.prev()
+      );
+    } while (bigInt.gcd(e, totient).notEquals(1) || p.minus(q).abs().shiftRight(keysize / 2 - 100).isZero());
+
+   // return {
+     // e, 
+     // n: p.multiply(q),
+     // d: e.modInv(totient),
+
+      
+    //};
+   // console.log(e.value)
+    //console.log(p.multiply(q).value)
+    //console.log(e.modInv(totient).value)
+
+    var n = p.multiply(q)
+    var d = e.modInv(totient)
+    exp = e.value
+    pub = n.value
+    pri = d.value
+    
+  }
+
+  console.log(exp)
+  console.log(pub)
+  console.log(pri)
+
+  this.setState({rsapubkey:pub})
+  this.setState({rsa_pri_key:pri})
+  this.setState({exponent:exp})
+ 
+
+}
+
+keys(event){
+  event.preventDefault()
+  //alert(this.state.rsa_pub_key)
+     console.log(this.state.rsapubkey)
+      console.log(this.state.rsa_pri_key)
+      console.log(this.state.exponent)
+
+}
+
        
 
   render() {
@@ -1103,8 +1202,35 @@ decrypt_to_plain(event){
         ></Receiver>
         </div>
         </div>
-      {console.log(this.state)}
+     
+
+      <div className="rsa">
+      <h1 class="text-center"><b>RSA IMPLIMENTATION BELOW</b></h1>
+      <button class="btn btn-primary" onClick={this.rsa_generate_keys}>GENERATE KEYS</button>
+      <button class="btn btn-primary" onClick={this.keys}>SHOW OUTPUT</button>
+      <div className="row">
+        
+          <div className="col-lg-6">
       
+              <RSA_SENDER
+              happy={this.state.rsapubkey}
+            
+              ></RSA_SENDER>
+         </div>
+      
+         <div className="col-lg-6">
+        
+             <RSA_RECEIVER
+             happy={this.state.rsapubkey}
+             ></RSA_RECEIVER>
+         </div>
+      
+    </div>
+
+      </div>
+      {this.state.rsa_pub_key}
+      {this.state.rsa_pri_key}
+      {this.state.exponent}
      
       </div>
     );

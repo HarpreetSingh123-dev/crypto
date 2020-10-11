@@ -63,13 +63,14 @@ function Sender(props) {
                             </div>
                             <br></br>
                             <div>
-                            <label for="sha"><b>SHA VALUE:</b>{props.sha}</label>
+                            <label for="sha" className="sha-set"><b>SHA VALUE:</b>{props.sha}</label>
                             </div>
                         
                         </div>
                         </div>
                         <div className="send_button">
                         <button  class="btn btn-primary" onClick={props.message}>SEND</button>
+                        
                         </div>
                  </form>
 
