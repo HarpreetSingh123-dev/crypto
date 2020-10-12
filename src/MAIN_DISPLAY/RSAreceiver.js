@@ -14,7 +14,7 @@ function RSAreceiver(props) {
             <div class="form-group">
             
             <div>
-    <label for="rsa_cipher"><b>CIPHER TEXT:</b></label>
+    <label for="rsa_cipher"><b>CIPHER TEXT:</b>{props.cipher}</label>
             </div>
 
             <div>
@@ -25,7 +25,7 @@ function RSAreceiver(props) {
             
            <div>
 
-           <button  class="btn btn-primary" onClick={props.sender_submit}>DECRYPT</button>
+           <button  class="btn btn-primary" onClick={props.decrypt}>DECRYPT</button>
            </div>
            
            <div>

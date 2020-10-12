@@ -37,7 +37,8 @@ class App extends Component {
                         rsa_pri_key:'',
                         rsa_cipher_text:'',
                         rsa_decrypted_cipher:'',
-                        power:''
+                        power:'',
+                        rsa_receiver_cipher:''
                          }
   
        this.submit_for_encryption=this.submit_for_encryption.bind(this)
@@ -52,6 +53,8 @@ class App extends Component {
        this.rsa_text=this.rsa_text.bind(this)
 
        this.rsa_encryption=this.rsa_encryption.bind(this)
+       this.rsa_send=this.rsa_send.bind(this)
+       this.rsa_decrypt=this.rsa_decrypt.bind(this)
 }
 
 
@@ -1229,12 +1232,30 @@ rsa_encryption(event){
     var b =""
     b = bigInt(encodedMsg).modPow(e, n);
     
-    encrypted_message=b
-    console.log("encrypted message is"+ encrypted_message)
+    console.log("encrypted message in object is"+ b)
+    encrypted_message=b.value.toString()
+    console.log("encrypted message in string is"+ encrypted_message)
+
+   
   }
+  this.setState({rsa_cipher_text:encrypted_message})
+  //console.log(typeof(encrypted_message)+"here is type")
 }
 
+rsa_send(event){
+  
+  event.preventDefault()
+  this.setState({rsa_receiver_cipher:this.state.rsa_cipher_text})
 
+}
+
+rsa_decrypt(event){
+  event.preventDefault()
+  const bigInt = require('big-integer')
+var cipher = bigInt(this.state.rsa_receiver_cipher)
+console.log(cipher)
+
+}
   render() {
 
     return (
@@ -1284,6 +1305,8 @@ rsa_encryption(event){
               pub={this.state.rsapubkey}
               rsa_text_change={this.rsa_text}
               rsa_encrypt={this.rsa_encryption}
+              rsa_cipher={this.state.rsa_cipher_text}
+              rsa_send={this.rsa_send}
             
               ></RSA_SENDER>
          </div>
@@ -1293,6 +1316,8 @@ rsa_encryption(event){
              <RSA_RECEIVER
 
              pri={this.state.rsa_pri_key}
+             cipher={this.state.rsa_receiver_cipher}
+             decrypt={this.rsa_decrypt}
             
              ></RSA_RECEIVER>
          </div>

@@ -26,7 +26,11 @@ function RSAsender(props) {
                         </div>
 
                         <div>
-                        <label for="rsa_cipher"><b>CIPHER TEXT:</b>{props.cipher_text}</label>
+                        <button  class="btn btn-primary" onClick={props.rsa_send}>SEND</button>
+                        </div>
+
+                        <div>
+                        <label for="rsa_cipher"><b>CIPHER TEXT:</b>{props.rsa_cipher}</label>
                         </div>
             </form>            
             </div>
