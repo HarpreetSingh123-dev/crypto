@@ -41,7 +41,7 @@ class App extends Component {
                         rsa_receiver_cipher:'',
                         coded_message:'',
                         //// for checking//////////////////////////////
-                         mod:''
+                        mod:''
 
                          }
   
@@ -1295,7 +1295,7 @@ decode(decrypted_message)
     console.log(plain)
   }
 
-
+this.setState({rsa_decrypted_cipher:plain})
 
 
 }
@@ -1361,6 +1361,7 @@ decode(decrypted_message)
              pri={this.state.rsa_pri_key}
              cipher={this.state.rsa_receiver_cipher}
              decrypt={this.rsa_decrypt}
+             plain={this.state.rsa_decrypted_cipher}
             
              ></RSA_RECEIVER>
          </div>

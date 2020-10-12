@@ -29,7 +29,7 @@ function RSAreceiver(props) {
            </div>
            
            <div>
-           <label for="rsa_plain"><b>PLAIN TEXT:</b></label>
+    <label for="rsa_plain"><b>PLAIN TEXT:</b>{props.plain}</label>
            </div>
 
             </div>
