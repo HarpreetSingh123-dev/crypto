@@ -38,7 +38,11 @@ class App extends Component {
                         rsa_cipher_text:'',
                         rsa_decrypted_cipher:'',
                         power:'',
-                        rsa_receiver_cipher:''
+                        rsa_receiver_cipher:'',
+                        coded_message:'',
+                        //// for checking//////////////////////////////
+                         mod:''
+
                          }
   
        this.submit_for_encryption=this.submit_for_encryption.bind(this)
@@ -1152,7 +1156,7 @@ rsa_generate_keys(event){
     exp = e.value
     pub = n.value
     pri = d.value
-    //console.log(pub)
+    console.log("private key is"+pri)
     //console.log( typeof(pub))
     l = pub.toString()
     m = pri.toString()
@@ -1198,7 +1202,7 @@ rsa_encryption(event){
 
   var encrypted_message=""
   
-  
+  var mod =""
   
   var plaintext = this.state.rsa_plaintext
   
@@ -1222,8 +1226,9 @@ rsa_encryption(event){
     h= bigInt(codes);
 
     encoded_message =h
-  }
     
+  }
+    this.setState({coded_message:encoded_message.value})
     console.log(encoded_message)
 
    encrypt(encoded_message,key,e)
@@ -1231,7 +1236,7 @@ rsa_encryption(event){
   
     var b =""
     b = bigInt(encodedMsg).modPow(e, n);
-    
+    mod = b.value
     console.log("encrypted message in object is"+ b)
     encrypted_message=b.value.toString()
     console.log("encrypted message in string is"+ encrypted_message)
@@ -1240,6 +1245,7 @@ rsa_encryption(event){
   }
   this.setState({rsa_cipher_text:encrypted_message})
   //console.log(typeof(encrypted_message)+"here is type")
+  this.setState({mod:mod})
 }
 
 rsa_send(event){
@@ -1252,8 +1258,45 @@ rsa_send(event){
 rsa_decrypt(event){
   event.preventDefault()
   const bigInt = require('big-integer')
-var cipher = bigInt(this.state.rsa_receiver_cipher)
-console.log(cipher)
+
+  var privatekey = bigInt(this.state.rsa_pri_key)
+  var encryptedmessage = this.state.mod
+  var publickey =bigInt(this.state.rsapubkey)
+
+  var decrypted_message =""
+  var plain=""
+  //console.log("private key is"+ privatekey)
+  
+  decrypt(encryptedmessage,privatekey,publickey)
+  function decrypt(encryptedMsg, d, n) {
+    
+    decrypted_message = bigInt(encryptedMsg).modPow(d, n); 
+  }
+
+  console.log(decrypted_message)
+
+decode(decrypted_message)
+  function decode(code) {
+    const stringified = code.toString();
+    let string = '';
+
+    for (let i = 0; i < stringified.length; i += 2) {
+      let num = Number(stringified.substr(i, 2));
+      
+      if (num <= 30) {
+        string += String.fromCharCode(Number(stringified.substr(i, 3)));
+        i++;
+      } else {
+        string += String.fromCharCode(num);
+      }
+    }
+
+    plain = string;
+    console.log(plain)
+  }
+
+
+
 
 }
   render() {
