@@ -1338,8 +1338,14 @@ this.setState({rsa_decrypted_cipher:plain})
 
       <div className="rsa">
       <h1 class="text-center"><b>RSA IMPLIMENTATION BELOW</b></h1>
+      <div className="container">
+      <div className="row">
+      <div className="col text-center">  
+      <p> Click on Generate keys to generate public and private key and then enter plain textv to encrypt</p>
       <button class="btn btn-primary" onClick={this.rsa_generate_keys}>GENERATE KEYS</button>
-      <button class="btn btn-primary" onClick={this.keys}>SHOW OUTPUT</button>
+      </div>
+      </div>
+      </div>
       <div className="row">
         
           <div className="col-lg-6">
