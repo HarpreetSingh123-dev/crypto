@@ -1303,9 +1303,13 @@ this.setState({rsa_decrypted_cipher:plain})
 
     return (
       <div>
-        <h1 class="text-center"><b>SECURE CHAT APPLICATION</b></h1>
-      
         <div className="row">
+          <div className="col-lg-12 text-center" >
+        <h1 class="text-center"><b>SECURE CHAT APPLICATION</b></h1>
+        </div>
+        </div>
+        <div className="row">
+        
           <div className="col-lg-6">
        
             <Sender sender_submit={this.submit_for_encryption}
@@ -1337,11 +1341,12 @@ this.setState({rsa_decrypted_cipher:plain})
      
 
       <div className="rsa">
-      <h1 class="text-center"><b>RSA IMPLIMENTATION BELOW</b></h1>
+      
       <div className="container">
       <div className="row">
-      <div className="col text-center">  
-      <p> Click on Generate keys to generate public and private key and then enter plain textv to encrypt</p>
+      <div className="col-lg-12 text-center">  
+      <h1 class="text-center"><b>RSA IMPLIMENTATION BELOW</b></h1>
+      <p>Click on Generate keys to generate public and private key and then enter plain textv to encrypt</p>
       <button class="btn btn-primary" onClick={this.rsa_generate_keys}>GENERATE KEYS</button>
       </div>
       </div>
