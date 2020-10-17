@@ -1,8 +1,10 @@
 .main_sender .container{
 
    
-    border: 1px solid black;
+    border: 2px solid black;
     width: 700px;
+    box-shadow: 5px 10px 8px #888888;
+    padding: 20px;
    
 }
 

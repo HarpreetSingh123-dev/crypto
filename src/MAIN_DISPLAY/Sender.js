@@ -30,8 +30,9 @@ function Sender(props) {
                         </div>
 
                         <div class="form-group">
+                            <div>
                         <label>
-                             <b>TECHNIQUE USED</b>
+                             <b>SELECT FROM FOLLOWING TECHNIQUES</b>
                              
                             <select class="form-control" value={props.initial_tech} onChange={props.tech_change}>
                             <option value="caesercipher">Caeser Cipher</option>
@@ -45,32 +46,38 @@ function Sender(props) {
                             <option value="des">DES</option>
                             <option value="aes">AES</option>
                             <option value="rc4">RC4</option>
-                            <option value="rsa">RSA</option>
+                            
                             <option value="ecc">ECC</option>
                             <option value="dhkey">DH for Key Exchange</option>
                            
                             </select>
                        </label>
                        </div>
+                       </div>
                        
                       
-                        <button  class="btn btn-primary" onClick={props.sender_submit}>ENCRYPT</button>
+                        <button  class="btn btn-primary" onClick={props.sender_submit}>ENCRYPT MESSAGE</button>
                         
-                        <div className="cipher_set">
-                        <div class="form-group">
+                            <div className="cipher_set">
+                            <div class="form-group">
                             <div>
                             <label for="cipher"><b>CIPHER TEXT:</b>{props.cipher_text}</label>
                             </div>
-                            <br></br>
+                            </div>
                             <div>
+
+                            <div class="form-group" >
                             <label for="sha" className="sha-set"><b>SHA VALUE:</b>{props.sha}</label>
                             </div>
+                            
+                            </div>
+                        
                         
                         </div>
-                        </div>
+                        <div class="form-group">
                         <div className="send_button">
-                        <button  class="btn btn-primary" onClick={props.message}>SEND</button>
-                        
+                        <button  class="btn btn-primary" onClick={props.message}>SEND MESSAGE</button>
+                        </div>
                         </div>
                  </form>
 

@@ -1,6 +1,7 @@
 .main_receiver .container{
-    border: 1px solid black;
+    border: 2px solid black;
     width: 700px;
    
-
+    padding: 20px;
+    box-shadow: 5px 10px 8px #888888
 }

@@ -43,22 +43,26 @@ function Receiver(props) {
                        </label>
                        </div>
                        
-                      
-                        <button  class="btn btn-primary" onClick={props.decrypt}>DECRYPT</button>
-                        
+                       <div>
+                           <div class="form-group" >
+                        <button  class="btn btn-primary" onClick={props.decrypt}>DECRYPT MESSAGE</button>
+                        </div>
+                        </div>
                         <div className="plain_text_receiver">
                         <div class="form-group">
 {/*<button  class="btn btn-primary" onClick={props.show_plain}>SHOW PLAIN TEXT:{props.show_plain}</button>*/}
                        <label for="plain_text_receiver"><b>PLAIN TEXT:</b>{props.show_plain}</label>
-                          <div>{props.sha}</div>
-                            <br></br>
-                        
-                            <div>
+                          
                             
+                        </div>
+                            <div>
+                               <div class="form-group">
+                                  <label for="sha_receiver"><b>SHA VALUE:</b></label>
+                               </div>
                             </div>
                         
                         </div>
-                        </div>
+                       
 
                         
                  </form>

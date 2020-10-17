@@ -14,24 +14,25 @@ function RSAreceiver(props) {
             <div class="form-group">
             
             <div>
-    <label for="rsa_cipher"><b>CIPHER TEXT:</b>{props.cipher}</label>
+                <label for="rsa_cipher"><b>CIPHER TEXT:</b>{props.cipher}</label>
             </div>
 
             <div>
  
-    <label for="rsa_cipher"><b>PRIVATE KEY:</b>{props.pri}</label>
+                 <label for="rsa_cipher"><b>PRIVATE KEY:</b>{props.pri}</label>
 
             </div>
             
            <div>
 
-           <button  class="btn btn-primary" onClick={props.decrypt}>DECRYPT</button>
+                <button  class="btn btn-primary" onClick={props.decrypt}>DECRYPT</button>
            </div>
            
            <div>
-    <label for="rsa_plain"><b>PLAIN TEXT:</b>{props.plain}</label>
+               <label for="rsa_plain"><b>PLAIN TEXT:</b>{props.plain}</label>
            </div>
 
+         
             </div>
 
 
