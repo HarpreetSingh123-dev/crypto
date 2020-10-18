@@ -8,7 +8,8 @@ import sha256  from 'sha256'
 import RSA_SENDER from './MAIN_DISPLAY/RSAsender'
 import RSA_RECEIVER from './MAIN_DISPLAY/RSAreceiver'
 
-
+import BOB from './MAIN_DISPLAY/Bob_Sender'
+import ALICE from './MAIN_DISPLAY/Alice_Receiver'
 
 class App extends Component {
 
@@ -41,7 +42,23 @@ class App extends Component {
                         rsa_receiver_cipher:'',
                         coded_message:'',
                         //// for checking//////////////////////////////
-                        mod:''
+                        mod:'',
+
+                        ///////////////////// BELOW STATES ARE FOR DEFI HELLMEN//////////////
+                        bob_alpha:'',
+                        bob_q:'',
+                        bob_xa:'',
+                        y_bob:'',
+                        rec_alice_ya:'',
+                        bob_sec_key:'',
+
+                        alice_alpha:'',
+                        alice_q:'',
+                        alice_xa:'',
+                        y_alice:'',
+                        rec_bob_ya:'',
+                        alice_sec_key:''
+
 
                          }
   
@@ -51,7 +68,7 @@ class App extends Component {
        this.tech=this.tech.bind(this)
        this.send=this.send.bind(this)
        this.decrypt_to_plain=this.decrypt_to_plain.bind(this)
-       ///////////////BELOW IS FOR RSA/////////////////
+       ///////////////BELOW IS FOR RSA///////////////////////////
        this.rsa_generate_keys=this.rsa_generate_keys.bind(this)
        
        this.rsa_text=this.rsa_text.bind(this)
@@ -59,6 +76,24 @@ class App extends Component {
        this.rsa_encryption=this.rsa_encryption.bind(this)
        this.rsa_send=this.rsa_send.bind(this)
        this.rsa_decrypt=this.rsa_decrypt.bind(this)
+
+       /////////////////////BELOW IS FOR DEFFI HELMEN////////////
+       this.bob_alpha_set=this.bob_alpha_set.bind(this)
+       this.bob_q_set=this.bob_q_set.bind(this)
+       this.bob_xa_set=this.bob_xa_set.bind(this)
+
+       this.alice_alpha_set=this.alice_alpha_set.bind(this)
+       this.alice_q_set=this.alice_q_set.bind(this)
+       this.alice_xa_set=this.alice_xa_set.bind(this)
+
+       this.bob_ya=this.bob_ya.bind(this)
+       this.alice_ya=this.alice_ya.bind(this)
+
+       this.send_bob_ya=this.send_bob_ya.bind(this)
+       this.send_alice_ya=this.send_alice_ya.bind(this)
+
+       this.bob_sec=this.bob_sec.bind(this)
+       this.alice_sec=this.alice_sec.bind(this)
 }
 
 
@@ -1095,6 +1130,8 @@ decrypt_to_plain(event){
       
 }
 
+/////////////////////////////RSA IMPLIMENTATION BELOW////////////////////////////////////////////////////////
+
 rsa_generate_keys(event){
 
   event.preventDefault()
@@ -1298,7 +1335,118 @@ decode(decrypted_message)
 this.setState({rsa_decrypted_cipher:plain})
 
 
+
 }
+
+/////////////////////////////////// DEFFI HELMEN IMPLIMENTATION BELOW/////////////////////////////////////
+
+
+bob_alpha_set(event){
+
+     this.setState({bob_alpha:event.target.value})
+  }
+
+bob_q_set(event){
+
+    this.setState({bob_q:event.target.value})
+  }
+
+bob_xa_set(event){
+   
+   this.setState({bob_xa:event.target.value})
+  }
+
+alice_alpha_set(event){
+
+  this.setState({alice_alpha:event.target.value})
+ 
+ }
+
+alice_q_set(event){
+
+  this.setState({alice_q:event.target.value})
+ }
+
+alice_xa_set(event){
+  
+  this.setState({alice_xa:event.target.value})
+ }
+
+ bob_ya(event){
+
+          event.preventDefault()
+
+          var alpha =this.state.bob_alpha
+          var x= this.state.bob_xa
+          var q =this.state.bob_q
+
+          var k =""
+          var y =""
+
+          k= Math.pow(alpha , x)% q
+         console.log(k)
+         this.setState({y_bob:k})
+
+
+ }
+
+ alice_ya(event){
+
+         event.preventDefault()
+
+         var alpha =this.state.alice_alpha
+         var x= this.state.alice_xa
+         var q =this.state.alice_q
+
+         var k =""
+         var y =""
+
+         k= Math.pow(alpha , x)% q
+         console.log(k)
+
+         this.setState({y_alice:k})
+
+ }
+
+ send_bob_ya(event){
+
+  event.preventDefault()
+
+  this.setState({rec_bob_ya:this.state.y_bob})
+ }
+
+ send_alice_ya(event){
+
+  event.preventDefault()
+this.setState({rec_alice_ya:this.state.y_alice})
+ }
+
+ bob_sec(event){
+
+event.preventDefault()
+  var sec =""
+  var y = this.state.rec_alice_ya
+  var q = this.state.bob_q
+  var x = this.state.bob_xa
+
+  sec = Math.pow(y,x) % q
+this.setState({bob_sec_key:sec})
+ }
+
+ alice_sec(event){
+event.preventDefault()
+
+var sec =""
+var y = this.state.rec_bob_ya
+var q = this.state.alice_q
+var x = this.state.alice_xa
+
+sec = Math.pow(y,x) % q
+this.setState({alice_sec_key:sec})
+  
+ }
+
+
   render() {
 
     return (
@@ -1380,6 +1528,55 @@ this.setState({rsa_decrypted_cipher:plain})
     </div>
 
       </div>
+
+      <div className="deffi_hellmen">
+
+      <div className="container">
+      <div className="row">
+      <div className="col-lg-12 text-center">  
+      <h1 class="text-center"><b>DEFFI HELMEN IMPLIMENTATION BELOW</b></h1>
+      
+      </div>
+      </div>
+      </div>
+       
+         <div className="row">
+
+                 <div className="col-lg-6">
+              
+                        <BOB
+                        
+                        bob_alpha={this.bob_alpha_set}
+                        bob_q={this.bob_q_set}
+                        bob_xa={this.bob_xa_set}
+                        bob_cal_ya={this.bob_ya}
+                        y_bob={this.state.y_bob}
+                        send_bob_ya={this.send_bob_ya}
+                        ya_rec_alice={this.state.rec_alice_ya}
+                        bob_sec_cal={this.bob_sec}
+                        sec={this.state.bob_sec_key}
+                        ></BOB>
+                 </div>
+
+                 <div className="col-lg-6">
+              
+                      <ALICE alice_alpha={this.alice_alpha_set}
+                             alice_q={this.alice_q_set}
+                             alice_xa={this.alice_xa_set}
+                             alice_cal_ya={this.alice_ya}
+                             y_alice={this.state.y_alice}
+                             send_alice_ya={this.send_alice_ya}
+                             ya_rec_bob={this.state.rec_bob_ya}
+                             alice_sec_cal={this.alice_sec}
+                             sec={this.state.alice_sec_key}
+                      ></ALICE>
+                </div>
+             
+      
+
+      </div>
+
+     </div>
   {/*  <div>  {this.state.rsapubkey}</div>
 <div>{this.state.rsa_pri_key}</div>*/}
 <div>{console.log(this.state)}</div>

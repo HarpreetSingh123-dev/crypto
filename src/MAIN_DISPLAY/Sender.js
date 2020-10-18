@@ -48,7 +48,7 @@ function Sender(props) {
                             <option value="rc4">RC4</option>
                             
                             <option value="ecc">ECC</option>
-                            <option value="dhkey">DH for Key Exchange</option>
+                           
                            
                             </select>
                        </label>
