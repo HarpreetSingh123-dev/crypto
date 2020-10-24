@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import $ from 'jquery'
 //import  as  shift from 'caesar-shift';
 //import { encrypt, decrypt } from 'caesar-shift';
 import Sender from './MAIN_DISPLAY/Sender'
@@ -30,6 +31,8 @@ class App extends Component {
                           //////////////////
                           sha_sender:'',
                           sha_receiver:'',
+                          /////// PLAY FAIR KEY GENERATED///////////////
+                          playfair_gen_key:'',
 
                         //// BELOW STATES ARE ONLY USED FOR RSA //////////////////
 
@@ -315,6 +318,194 @@ submit_for_encryption(event) {
                             
                             this.setState({cipher: t})
                }
+
+/////////////////////////////////PLAYFAIR ENCRYPTION BELOW/////////////////////////////////////////////
+
+if(this.state.technique=='playfair'){
+
+    var play_fair_cipher =""
+
+     var  subCh= {
+            sub: 'J', // Letter to replace
+            rpl: 'I' ,// Letter to take its place
+            nullCh: 'X',
+            maxRow: 5,
+            maxCol: 5,
+     }
+
+
+     var key= ""     
+
+     var alpha = ""
+
+     var allowed ="ABCDEFGHIKLMNOPQRSTUVWXYZ"
+
+     var table = false
+
+     var keyArr =""
+
+     var generated_key_string =""
+
+     var keystring = this.state.key
+
+  /// below function is used to generate table//////   
+    function shuffleStr(str) {
+       
+             var array = str.split("");
+             var m = array.length,
+             t, i;
+
+                  // While there remain elements to shuffle…
+                while (m) {
+                       // Pick a remaining element…
+                       i = Math.floor(Math.random() * m--);
+                       // And swap it with the current element.
+                       t = array[m];
+                       array[m] = array[i];
+                       array[i] = t;
+                      }
+  
+                      return array.join("");
+            }
+
+////////////// Below function is used to generate table/////////////////////////////            
+    generateKeyTable(keystring)
+  
+    function generateKeyTable(keystring) {
+
+      
+    
+       if (!keystring) keystring = "PLAYFAIRCIPHER";
+
+     
+     
+       keystring = keystring.toUpperCase();
+       keystring = keystring.replace(/\W+/g, "");
+       keystring = keystring.replace(subCh.sub,subCh.rpl)
+
+       alpha = allowed
+
+        keyArr = keystring.split("")
+        
+       $.each( keyArr, function (x, c) {
+         
+
+          if (alpha.indexOf(c) > -1 && key.indexOf(c) == -1) {
+            key += c;
+            alpha = alpha.replace(c, "");
+        }
+  
+  
+         });
+
+      
+
+       if (table) {
+         
+        key += shuffleStr(alpha) 
+        console.log(key)
+      }
+  
+    else
+      {
+        key += alpha 
+        
+        generated_key_string = key
+      };
+    console.log("here"+ generated_key_string)
+
+    
+  }
+
+  this.setState({playfair_gen_key:generated_key_string})
+  ////////////////////// below functions are for encryption ////////////////////////
+
+  function getCharPosition(c) {
+    var index =key.indexOf(c);
+    var row = Math.floor(index / 5);
+    var col = index % 5;
+    return {
+        row: row,
+        col: col
+    };
+}
+
+function getCharFromPosition(pos) {
+  var index = pos.row * 5;
+  index = index + pos.col;
+  return key.charAt(index);
+}
+
+  function encipherPair(str) {
+    if (str.length != 2) return false;
+    var pos1 = getCharPosition(str.charAt(0));
+    var pos2 = getCharPosition(str.charAt(1));
+    var char1 = "";
+
+    // Same Column - Increment 1 row, wrap around to top
+    if (pos1.col == pos2.col) {
+        pos1.row++;
+        pos2.row++;
+        if (pos1.row > subCh.maxRow - 1) pos1.row = 0;
+        if (pos2.row > subCh.maxRow - 1) pos2.row = 0;
+        char1 = getCharFromPosition(pos1) + getCharFromPosition(pos2);
+    } else if (pos1.row == pos2.row) { // Same Row - Increment 1 column, wrap around to left
+        pos1.col++;
+        pos2.col++;
+        if (pos1.col > subCh.maxCol - 1) pos1.col = 0;
+        if (pos2.col > subCh.maxCol - 1) pos2.col = 0;
+        char1 = getCharFromPosition(pos1) + getCharFromPosition(pos2);
+    } else { // Box rule, use the opposing corners
+        var col1 = pos1.col;
+        var col2 = pos2.col;
+        pos1.col = col2;
+        pos2.col = col1;
+        char1 = getCharFromPosition(pos1) + getCharFromPosition(pos2);
+    }
+    console.log("encip char 1"+ char1)
+    return char1;
+}
+
+
+
+
+var gen_diagraph =""
+  makeDigraph(this.state.plaintext)
+
+  function makeDigraph(str) {
+    if (!str) return false;
+    var digraph = [];
+    str = str.toUpperCase();
+    str = str.replace(/\W+/g, "");
+    str = str.replace(subCh.sub,subCh.rpl);
+    var strArr = str.split("");
+
+    for (var i = 0; i < str.length; i++) {
+        if (allowed.indexOf(strArr[i]) == -1) continue;
+        if (i + 1 >= str.length) digraph.push(strArr[i] + subCh.nullCh);
+        else if (strArr[i] == strArr[i + 1]) digraph.push(strArr[i] + subCh.nullCh);
+        else digraph.push(strArr[i] + strArr[++i]);
+    }
+    gen_diagraph = digraph;
+    console.log(gen_diagraph)
+}
+
+encipher(gen_diagraph)
+function encipher(digraph) {
+  if (!digraph) return false;
+  var cipher = [];
+  for (var i = 0; i < digraph.length; i++) {
+      cipher.push(encipherPair(digraph[i]));
+  }
+  console.log(cipher.join(""));
+
+  play_fair_cipher = cipher
+}
+
+this.setState({cipher:play_fair_cipher})
+
+
+}
 
 ////////////////////////////////ONE TIME PAD ENCRYPTION BELOW//////////////////////////////////////////
  
@@ -801,6 +992,116 @@ decrypt_to_plain(event){
               }
              this.setState({decrtpted_text:y})
             }
+ 
+/////////////////////PLAY FAIR DECRYPTION BELOW/////////////////////////////////////////
+
+if(this.state.rec_tech=='playfair'){
+
+  var dec_playfair =""
+
+  var key = this.state.playfair_gen_key
+  var cipher_text = this.state.rec_cipher.join('')
+  console.log("dec cip"+ cipher_text)
+  
+
+  var dec_diagraph =""
+  
+  var alpha = ""
+
+  var allowed ="ABCDEFGHIKLMNOPQRSTUVWXYZ"
+  
+  var subCh = {
+    sub: 'J', // Letter to replace
+    rpl: 'I', // Letter to take its place
+    nullCh: 'X',
+    maxRow: 5,
+    maxCol: 5,
+}
+
+//////{ first make diagraph will be initiated }///////////////////     
+makeDigraph(cipher_text)
+
+function makeDigraph(str) {
+    if (!str) return false;
+    var digraph = [];
+    str = str.toUpperCase();
+    str = str.replace(/\W+/g, "");
+    str = str.replace(subCh.sub, subCh.rpl);
+    var strArr = str.split("");
+
+    for (var i = 0; i < str.length; i++) {
+        if (allowed.indexOf(strArr[i]) == -1) continue;
+        if (i + 1 >= str.length) digraph.push(strArr[i] + subCh.nullCh);
+        else if (strArr[i] == strArr[i + 1]) digraph.push(strArr[i] + subCh.nullCh);
+        else digraph.push(strArr[i] + strArr[++i]);
+    }
+    dec_diagraph = digraph;
+    console.log("dec diagraph"+dec_diagraph)
+}
+
+
+
+function getCharPosition(c) {
+  var index = key.indexOf(c);
+  var row = Math.floor(index / 5);
+  var col = index % 5;
+  return {
+      row: row,
+      col: col
+  };
+}
+
+function getCharFromPosition(pos) {
+  var index = pos.row * 5;
+  index = index + pos.col;
+  return key.charAt(index);
+}
+
+function decipherPair(str) {
+  if (str.length != 2) return false;
+  var pos1 = getCharPosition(str.charAt(0));
+  var pos2 = getCharPosition(str.charAt(1));
+  var char1 = "";
+
+  // Same Column - Decrement 1 row, wrap around to bottom
+  if (pos1.col == pos2.col) {
+      pos1.row--;
+      pos2.row--;
+      if (pos1.row < 0) pos1.row = subCh.maxRow - 1;
+      if (pos2.row < 0) pos2.row = subCh.maxRow - 1;
+      char1 = getCharFromPosition(pos1) + getCharFromPosition(pos2);
+  } else if (pos1.row == pos2.row) { // Same row - Decrement 1 column, wrap around to right
+      pos1.col--;
+      pos2.col--;
+      if (pos1.col < 0) pos1.col = subCh.maxCol - 1;
+      if (pos2.col < 0) pos2.col = subCh.maxCol - 1;
+      char1 = getCharFromPosition(pos1) + getCharFromPosition(pos2);
+  } else { // Box rules, use opposing corners (same as forward)
+      var col1 = pos1.col;
+      var col2 = pos2.col;
+      pos1.col = col2;
+      pos2.col = col1;
+      char1 = getCharFromPosition(pos1) + getCharFromPosition(pos2);
+  }
+  console.log("char 1 "+char1)
+  return char1;
+}
+
+
+
+//////////{ second decipher will be initiated}//////////////////
+decipher(dec_diagraph)
+function decipher(digraph) {
+  if (!digraph) return false;
+  var plaintext = [];
+  for (var i = 0; i < digraph.length; i++) {
+      plaintext.push(decipherPair(digraph[i]));
+  }
+   dec_playfair = plaintext
+}
+this.setState({decrtpted_text:dec_playfair})
+}
+
 
 ///////////////////ONE TIME PAD DECRYPTION BELOW///////////////////////////////////////
 
