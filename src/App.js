@@ -124,23 +124,46 @@ rsa_text(event){
 
 submit_for_encryption(event) {
 
-//// THESE ARE APPLIED SO THAT ANY INPUT SHOULD NOT REMAIN EMPTY//////////////////////////  
+//// THESE ARE APPLIED SO THAT ANY INPUT SHOULD NOT REMAIN EMPTY AND THERE IS SPECIAL CASE FOR MONOALPHABATIC//////////////////////////  
   if(this.state.plaintext===""){
+    event.preventDefault()
     alert("please enter plain text")
-
+    return
     
   }
 
-
-
   if(this.state.technique===""){
+    event.preventDefault()
     alert("please enter technique")
+    return
    }
+   
+   if(this.state.technique!=="monoalphabatic"){
+  
+        if(this.state.key===""){
+            event.preventDefault()
+            alert("please enter key")
+            return
+        } 
+  
+       if(this.state.plaintext!=="" && this.state.technique!=="" && this.state.key!=="" ){
+           var for_sha_plain = this.state.plaintext
+           var sha_of_plain_text = sha256(for_sha_plain)
+           this.setState({sha_sender:sha_of_plain_text})
+      }
+  }
+
+  if(this.state.technique=="monoalphabatic"){  // if tehnique is monoalphabatic, we generate key through a coded function, we dont enter key as input
+  
+      if(this.state.plaintext!=="" && this.state.technique!==""){
+          var for_sha_plain = this.state.plaintext
+          var sha_of_plain_text = sha256(for_sha_plain)
+          this.setState({sha_sender:sha_of_plain_text})
+       }
+}
 ///////////////////////////////////////////////////////////////////////////////////////////           
               event.preventDefault()
-              var for_sha_plain = this.state.plaintext
-              var sha_of_plain_text = sha256(for_sha_plain)
-              this.setState({sha_sender:sha_of_plain_text})
+              
 ///////////////// CEASER CIPHER ENCRYPTION BELOW //////////////////////////////////////////          
                   if(this.state.technique=='caesercipher') { 
                      var l =""
@@ -226,7 +249,7 @@ submit_for_encryption(event) {
                     this.setState({mono_key:p})
                     this.setState({key:p})
                     this.setState({cipher:m})
-                    alert("<b>RANDOM KEY GENERATED FOR MONOALPHABATIC IS</b>" + t)
+                    alert("<b>KEY GENERATED FOR MONOALPHABATIC IS</b>" + t)
                 }
 
 ///////////////// POLYALPHABATIC ENCRYPTION BELOW /////////////////////////////////////
@@ -234,7 +257,7 @@ submit_for_encryption(event) {
                if(this.state.technique=='polyalphabetic'){
 
                 var f = this.state.plaintext.toString()
-                var b = this.state.key.toString()
+                var b = this.state.key.toString().toUpperCase()
                 var t = ""
                 function stringToIntList(string)
                 
@@ -284,6 +307,7 @@ submit_for_encryption(event) {
                                 table[table.length] = line;
                                 i++;
                               }
+                             console.log("POLY ALPHABATIC GENERATED TABLE "+table)
                               return table;
                             }
 
@@ -300,6 +324,8 @@ submit_for_encryption(event) {
                                 for(var i = 0; i < text.length; i++) {
                                   var row = table[0].indexOf(key[keyChar]);
                                   var col = table[0].indexOf(text[i]);
+                                  console.log("ROW IS (KEY) "+row)
+                                  console.log("COL IS (PLAIN TEXT) "+col)
                                   message[message.length] = table[row][col];
                                   if (keyChar<key.length-1) {
                                     keyChar++;
@@ -308,10 +334,11 @@ submit_for_encryption(event) {
                                   }
                                 }
                               }
+                              console.log("GENERATED MESSAGE IN CODES "+ message)
                               message = intsToCharList(message).join("");
                              
                                 t = message
-                              console.log("poly output" + t)
+                              console.log("GENERATED MESSGAE AFTER CONVERTING " + t)
                               
                             }       
 
@@ -412,7 +439,9 @@ if(this.state.technique=='playfair'){
         
         generated_key_string = key
       };
-    console.log("here"+ generated_key_string)
+
+      
+    console.log("GENERATED TABLE FOR PLAY FAIR "+ generated_key_string)
 
     
   }
@@ -847,6 +876,8 @@ decrypt_to_plain(event){
   
   event.preventDefault()
 
+  
+  
  //////*CEASER CIPHER DECRYPTION BELOW*///////////////////////////
              if(this.state.rec_tech=='caesercipher') { 
                  
@@ -892,7 +923,7 @@ decrypt_to_plain(event){
                  this.setState({decrtpted_text:r})
                  var sha = sha256(r)
                  console.log(sha)
-                 this.setState({sha_receiver:sha})
+               this.setState({sha_receiver:sha})
                 }
 ////////////////*MONOALPHABATICS DECRYPTION BELOW*///////////////////////////
 
@@ -914,6 +945,10 @@ decrypt_to_plain(event){
               x =   textArr.join().replace(/,/g, '')
           }
           this.setState({decrtpted_text:x})
+
+                var sha = sha256(x)
+                 console.log(sha)
+               this.setState({sha_receiver:sha})
          }
 
 /////////////////////POLYALPHABATIC DECRYPTION BELOW//////////////////////////////        
@@ -991,6 +1026,9 @@ decrypt_to_plain(event){
                 console.log(y)              
               }
              this.setState({decrtpted_text:y})
+             var sha = sha256(y)
+             console.log(sha)
+            this.setState({sha_receiver:sha})
             }
  
 /////////////////////PLAY FAIR DECRYPTION BELOW/////////////////////////////////////////
@@ -1100,6 +1138,11 @@ function decipher(digraph) {
    dec_playfair = plaintext
 }
 this.setState({decrtpted_text:dec_playfair})
+ var g = dec_playfair
+ var v =g.join("")
+var sha = sha256(v)
+console.log(sha)
+this.setState({sha_receiver:sha})
 }
 
 
@@ -1297,7 +1340,9 @@ this.setState({decrtpted_text:dec_playfair})
               }
             }
            this.setState({decrtpted_text:qw})
-          
+           var sha = sha256(qw)
+           console.log(sha)
+           this.setState({sha_receiver:sha})
           }
 ///////////////////////////RAIL FENCE DECRYPTION BELOW/////////////////////////////////////
 
@@ -1426,7 +1471,6 @@ this.setState({decrtpted_text:dec_playfair})
  this.setState({decrtpted_text:decrypted_rc4})
 
      }
-      
       
       
 }
@@ -1744,7 +1788,9 @@ var x = this.state.alice_xa
 
 sec = Math.pow(y,x) % q
 this.setState({alice_sec_key:sec})
-  
+
+
+
  }
 
 
@@ -1781,7 +1827,7 @@ this.setState({alice_sec_key:sec})
                   receiver_tech={this.state.rec_tech}
                   decrypt={this.decrypt_to_plain}
                   show_plain={this.state.decrtpted_text}
-                  sha={this.state.sha_receiver}
+                  shaa={this.state.sha_receiver}
                   
         
         ></Receiver>

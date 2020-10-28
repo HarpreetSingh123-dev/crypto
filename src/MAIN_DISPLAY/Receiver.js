@@ -57,7 +57,7 @@ function Receiver(props) {
                         </div>
                             <div>
                                <div class="form-group">
-                                  <label for="sha_receiver"><b>SHA VALUE:</b></label>
+   <label for="sha_receiver"><b>SHA VALUE:</b>{props.shaa}</label>
                                </div>
                             </div>
                         
