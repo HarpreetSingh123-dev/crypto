@@ -1195,6 +1195,9 @@ decryptText(cipher)
   }
 
 this.setState({decrtpted_text:dec_hill})
+               var sha = sha256(dec_hill)
+                 console.log(sha)
+               this.setState({sha_receiver:sha})
 }
 
 /////////////////////PLAY FAIR DECRYPTION BELOW/////////////////////////////////////////
@@ -1541,6 +1544,10 @@ this.setState({sha_receiver:sha})
                 console.log(decrypted_railfence)
             }
             this.setState({decrtpted_text:decrypted_railfence})
+
+            var sha = sha256(decrypted_railfence)
+             console.log(sha)
+            this.setState({sha_receiver:sha})
             }
 
 ///////////////////////////COLUMANR DECRYPTION BELOW///////////////////////////////////////
@@ -1549,7 +1556,7 @@ this.setState({sha_receiver:sha})
 
          
         var chars = "abcdefghijklmnopqrstuvwxyz";
-        var decrpyted_otp =""
+        var decrpyted_columnar =""
         var ciphertext = this.state.rec_cipher
         var keyword = this.state.rec_key
         
@@ -1587,12 +1594,16 @@ this.setState({sha_receiver:sha})
                   plaintext += newcols[j].charAt(i);
               }
           }
-          decrpyted_otp = plaintext;
-          console.log(decrpyted_otp)
+          decrpyted_columnar = plaintext;
+          console.log(decrpyted_columnar)
       }
 
-      this.setState({decrtpted_text:decrpyted_otp})
-      
+      this.setState({decrtpted_text:decrpyted_columnar})
+
+
+      var sha = sha256(decrpyted_columnar)
+             console.log(sha)
+            this.setState({sha_receiver:sha})
        }
 
 ///////////////////////////////// RC4 DECRYPTION BELOW//////////////////////////
@@ -1635,6 +1646,10 @@ this.setState({sha_receiver:sha})
       }
 
  this.setState({decrtpted_text:decrypted_rc4})
+
+ var sha = sha256(decrypted_rc4)
+             console.log(sha)
+            this.setState({sha_receiver:sha})
 
      }
       

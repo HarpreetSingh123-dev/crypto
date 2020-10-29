@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "big-integer": "^1.6.48",
     "caesar-shift": "^1.0.0",
+    "digital-signature": "^1.0.4",
     "jquery": "^3.5.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
