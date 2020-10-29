@@ -33,7 +33,8 @@ class App extends Component {
                           sha_receiver:'',
                           /////// PLAY FAIR KEY GENERATED///////////////
                           playfair_gen_key:'',
-
+                          ////////// HILL CIPHER INTERNAL MATRIX INITILIZATION//////
+                          hill_matrix:'',
                         //// BELOW STATES ARE ONLY USED FOR RSA //////////////////
 
                         rsa_plaintext:'',
@@ -138,7 +139,7 @@ submit_for_encryption(event) {
     return
    }
    
-   if(this.state.technique!=="monoalphabatic"){
+   if(this.state.technique!=="monoalphabatic" && this.state.technique!=="hillcipher"){
   
         if(this.state.key===""){
             event.preventDefault()
@@ -153,7 +154,9 @@ submit_for_encryption(event) {
       }
   }
 
-  if(this.state.technique=="monoalphabatic"){  // if tehnique is monoalphabatic, we generate key through a coded function, we dont enter key as input
+  
+
+  if(this.state.technique=="monoalphabatic" || this.state.technique=="hillcipher" ){  // if tehnique is monoalphabatic, we generate key through a coded function, we dont enter key as input
   
       if(this.state.plaintext!=="" && this.state.technique!==""){
           var for_sha_plain = this.state.plaintext
@@ -161,6 +164,9 @@ submit_for_encryption(event) {
           this.setState({sha_sender:sha_of_plain_text})
        }
 }
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////           
               event.preventDefault()
               
@@ -345,6 +351,86 @@ submit_for_encryption(event) {
                             
                             this.setState({cipher: t})
                }
+
+//////////////////////////////////HILL CIPHER ENCRYPTION BELOW/////////////////////////////////////////
+if(this.state.technique=='hillcipher'){
+
+  var plain = this.state.plaintext
+  var initial_matrix =''
+  var hill_gen_cipher =''
+  var encodingMatrix = [[1,-1,-1,1],[2,-3,-5,4],[-2,-1,-2,2],[3, -3,-1,2]];
+  var key ="[[1,-1,-1,1],[2,-3,-5,4],[-2,-1,-2,2],[3, -3,-1,2]]"
+
+  initial_matrix = encodingMatrix
+  function getMatrixFromArray(arr, rows){
+    var matrix = new Array();
+    for (var i=0; i<rows; i++)
+      matrix[i] = new Array();
+
+    for (var i=0; i<arr.length; i++)
+      matrix[i % rows][Math.floor(i/rows)] = arr[i];
+
+    if (arr.length % rows != 0)
+      for (var i=arr.length % rows; i<rows; i++)
+        matrix[i][Math.floor((arr.length - 1)/rows)] = 0;
+
+    return matrix;
+  }
+
+  function getMatrixFromText(text, rows){
+    var arr = new Array();
+    for (var i=0; i<text.length; i++)
+      arr[i] = text.charCodeAt(i);
+    return getMatrixFromArray(arr, rows);
+  }
+
+  function multiplyMatrices(m1, m2){
+    var matrix = new Array();
+    for (var i=0; i<m1.length; i++)
+      matrix[i] = new Array();
+
+    for (var i=0; i<m1.length; i++)
+      for (var j=0; j<m2[0].length; j++){
+        matrix[i][j] = 0;
+        for (var k=0; k<m1[0].length; k++)
+          matrix[i][j] += m1[i][k]*m2[k][j];
+      }
+    return matrix;
+  }
+
+  function getNumbersFromMatrix(matrix){
+    var text = "";
+    for (var j=0; j<matrix[0].length; j++)
+      for (var i=0; i<matrix.length; i++)
+        text += matrix[i][j].toString() + " ";
+    return text;
+  }
+
+  function numberToChar(text){
+    var result = new String();
+    for (var i=0; i<text.length; i++)
+      result += String.fromCharCode(text.charCodeAt(i) + (text.charCodeAt(i)==32 ? 33 : 21));
+    return result;
+  }
+
+  encryptText(plain)
+  function encryptText(plain){
+    var plainText = plain
+    var plainMatrix = getMatrixFromText(plainText, 4);
+    var cipherMatrix = multiplyMatrices(encodingMatrix,plainMatrix);
+    var cipherText = getNumbersFromMatrix(cipherMatrix);
+    
+    cipherText = numberToChar(cipherText);
+    console.log(cipherText)
+    hill_gen_cipher = cipherText
+  }
+  this.setState({hill_matrix:initial_matrix})
+  this.setState({key:initial_matrix})
+ this.setState({cipher:hill_gen_cipher})
+
+ alert("<b>KEY MATRIX USED FOR HILL CIPHER IS</b>" +"[[1,-1,-1,1],[2,-3,-5,4],[-2,-1,-2,2],[3, -3,-1,2]]" )
+}
+
 
 /////////////////////////////////PLAYFAIR ENCRYPTION BELOW/////////////////////////////////////////////
 
@@ -1030,7 +1116,87 @@ decrypt_to_plain(event){
              console.log(sha)
             this.setState({sha_receiver:sha})
             }
- 
+////////////////////// HILL CIPHER DECRYPTION BELOW//////////////////////////////////// 
+if(this.state.rec_tech=='hillcipher'){
+
+var cipher = this.state.rec_cipher
+var decodingMatrix = [[6,-1,0,-1],[22,-4,1,-4],[14,-3,1,-2],[31,-6,2,-5]];
+var dec_hill =""
+
+function charToNumber(text){
+  var result = new String();
+  for (var i=0; i<text.length; i++)
+    result += String.fromCharCode(text.charCodeAt(i)-(text.charCodeAt(i)==65 ? 33 : 21));
+  return result;
+}
+
+function getMatrixFromArray(arr, rows){
+  var matrix = new Array();
+  for (var i=0; i<rows; i++)
+    matrix[i] = new Array();
+
+  for (var i=0; i<arr.length; i++)
+    matrix[i % rows][Math.floor(i/rows)] = arr[i];
+
+  if (arr.length % rows != 0)
+    for (var i=arr.length % rows; i<rows; i++)
+      matrix[i][Math.floor((arr.length - 1)/rows)] = 0;
+
+  return matrix;
+}
+
+
+function getMatrixFromNumbers(text, rows){
+    var i = 0;
+    var numbers = text.split(" ");
+    while (i<numbers.length){
+      if (numbers[i].replace(/s+/g, "") == "")
+        numbers.splice(i, 1);
+      else i++;
+    }
+    var arr = new Array();
+    for (var i=0; i<numbers.length; i++)
+      arr[i] = parseInt(numbers[i]);
+
+    return getMatrixFromArray(arr, rows);
+  }
+
+  function multiplyMatrices(m1, m2){
+    var matrix = new Array();
+    for (var i=0; i<m1.length; i++)
+      matrix[i] = new Array();
+
+    for (var i=0; i<m1.length; i++)
+      for (var j=0; j<m2[0].length; j++){
+        matrix[i][j] = 0;
+        for (var k=0; k<m1[0].length; k++)
+          matrix[i][j] += m1[i][k]*m2[k][j];
+      }
+    return matrix;
+  }
+
+  function getTextFromMatrix(matrix){
+    var text = new String();
+    for (var j=0; j<matrix[0].length; j++)
+      for (var i=0; i<matrix.length; i++)
+        text += matrix[i][j]>0 ? String.fromCharCode(matrix[i][j]) : "";
+    return text;
+  }
+
+decryptText(cipher)
+  function decryptText(){
+    var cipherText = cipher;
+    var cipherText = charToNumber(cipherText);
+    var cipherMatrix = getMatrixFromNumbers(cipherText, 4);
+    var plainMatrix = multiplyMatrices(decodingMatrix,cipherMatrix)
+     dec_hill = getTextFromMatrix(plainMatrix);
+
+    
+  }
+
+this.setState({decrtpted_text:dec_hill})
+}
+
 /////////////////////PLAY FAIR DECRYPTION BELOW/////////////////////////////////////////
 
 if(this.state.rec_tech=='playfair'){
@@ -1814,6 +1980,7 @@ this.setState({alice_sec_key:sec})
                 cipher_text={this.state.cipher}
                 message={this.send}
                 mono={this.state.mono_key}
+                hill={this.state.hill_matrix}
                 sha={this.state.sha_sender}
                 >
                   

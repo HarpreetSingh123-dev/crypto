@@ -7,7 +7,13 @@ function Sender(props) {
     a = (<p><b>KEY GENERATED FOR MONOALPHABATIC CIPHER:</b>{props.mono}</p>)
     }
 
-    if(!props.mono){
+    if(props.hill){
+        var b
+        b = (<p><b>KEY MATRIX USED FOR HILL CIPHER:</b>{props.hill}</p>)
+        
+    }
+
+    if(!props.mono  && !props.hill){
       var z
       z = (<p><label for="key"><b>KEY</b></label> <input type="text" class="form-control" id="key" onChange={props.key_change}></input></p>)
     }
@@ -27,6 +33,7 @@ function Sender(props) {
                         <div class="form-group">
     <p>{z}</p>
     <p>{a}</p>
+    <p>{b}</p>
                         </div>
 
                         <div class="form-group">
