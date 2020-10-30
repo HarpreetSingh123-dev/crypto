@@ -61,7 +61,10 @@ class App extends Component {
                         alice_xa:'',
                         y_alice:'',
                         rec_bob_ya:'',
-                        alice_sec_key:''
+                        alice_sec_key:'',
+
+                        ////////////////// BELOW STATES ARE FOR RSA DIGITAL SIGNATURE//////////
+                        generated_signature:''
 
 
                          }
@@ -169,7 +172,9 @@ submit_for_encryption(event) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////           
               event.preventDefault()
-              
+
+            
+
 ///////////////// CEASER CIPHER ENCRYPTION BELOW //////////////////////////////////////////          
                   if(this.state.technique=='caesercipher') { 
                      var l =""
@@ -205,6 +210,20 @@ submit_for_encryption(event) {
                       l= result;
                   }
                   this.setState({cipher:l})
+
+                  const signer = require('nacl-signature');
+
+                  const secretKey = 'AUBsLQhpSElD5LpLPB1p5JfwYHRIWjrsL+jJkHpBzyt+a1zqQLnX2ovt3czYD3TLU8MBE8MzEkhETP/H6y2ETA==';
+         
+                  const publicKey = 'fmtc6kC519qL7d3M2A90y1PDARPDMxJIREz/x+sthEw=';
+         
+                  var cipher_to_sign = l
+         
+         const signature = signer.sign(cipher_to_sign, secretKey);
+         
+         console.log(signature)
+         
+         this.setState({generated_signature:signature})
                 }       
 //////////////////// MONOALPHABATIC ENCRYPTION BELOW ///////////////////////
                 if(this.state.technique=='monoalphabatic'){
@@ -942,7 +961,7 @@ this.setState({cipher:play_fair_cipher})
           this.setState({cipher:rc4_encrypted_text})
 
          }
-          
+        
 }
 
 
@@ -971,6 +990,19 @@ decrypt_to_plain(event){
                  var amount = this.state.rec_key;
                  var shift = parseInt(amount)
                  var r =""
+
+                 const signer = require('nacl-signature');
+
+                 const publicKey = 'fmtc6kC519qL7d3M2A90y1PDARPDMxJIREz/x+sthEw=';
+            
+                 var cipher_to_check = text
+                 
+                 var signature = this.state.generated_signature.toString()
+                  if (signer.verify(cipher_to_check, signature, publicKey)){
+                console.log('Signature is valid!');
+               } else {console.log("not valid")}
+
+
                  decrypt(text,shift)
 
                  function encrypt(text, shift) {
@@ -1010,6 +1042,8 @@ decrypt_to_plain(event){
                  var sha = sha256(r)
                  console.log(sha)
                this.setState({sha_receiver:sha})
+
+               
                 }
 ////////////////*MONOALPHABATICS DECRYPTION BELOW*///////////////////////////
 
@@ -1653,7 +1687,7 @@ this.setState({sha_receiver:sha})
 
      }
       
-      
+  
 }
 
 /////////////////////////////RSA IMPLIMENTATION BELOW////////////////////////////////////////////////////////
@@ -1809,6 +1843,21 @@ rsa_encryption(event){
   this.setState({rsa_cipher_text:encrypted_message})
   //console.log(typeof(encrypted_message)+"here is type")
   this.setState({mod:mod})
+
+  const signer = require('nacl-signature');
+
+                  const secretKey = 'AUBsLQhpSElD5LpLPB1p5JfwYHRIWjrsL+jJkHpBzyt+a1zqQLnX2ovt3czYD3TLU8MBE8MzEkhETP/H6y2ETA==';
+         
+                  const publicKey = 'fmtc6kC519qL7d3M2A90y1PDARPDMxJIREz/x+sthEw=';
+         
+                  var cipher_to_sign = encrypted_message
+         
+         const signature = signer.sign(cipher_to_sign, secretKey);
+         
+         console.log(signature)
+         
+         this.setState({generated_signature:signature})
+  
 }
 
 rsa_send(event){
@@ -1826,6 +1875,17 @@ rsa_decrypt(event){
   var encryptedmessage = this.state.mod
   var publickey =bigInt(this.state.rsapubkey)
 
+
+const signer = require('nacl-signature');
+
+                 const publi = 'fmtc6kC519qL7d3M2A90y1PDARPDMxJIREz/x+sthEw=';
+            
+                 var cipher_to_check = this.state.mod
+                 
+                 var signature = this.state.generated_signature.toString()
+                  if (signer.verify(cipher_to_check, signature, publi)){
+                console.log('Signature is valid!');
+               } else {console.log("not valid")}
   var decrypted_message =""
   var plain=""
   //console.log("private key is"+ privatekey)
