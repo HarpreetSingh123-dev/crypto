@@ -48,6 +48,9 @@ class App extends Component {
                         //// for checking//////////////////////////////
                         mod:'',
 
+                        rsa_sender_pub_key:'',
+                        rsa_sender_private_key:'',
+
                         ///////////////////// BELOW STATES ARE FOR DEFI HELLMEN//////////////
                         bob_alpha:'',
                         bob_q:'',
@@ -64,7 +67,9 @@ class App extends Component {
                         alice_sec_key:'',
 
                         ////////////////// BELOW STATES ARE FOR RSA DIGITAL SIGNATURE//////////
-                        generated_signature:''
+                        generated_signature:'',
+                        rec_signature:'',
+                        sig_verify:''
 
 
                          }
@@ -128,7 +133,7 @@ rsa_text(event){
 
 submit_for_encryption(event) {
 
-//// THESE ARE APPLIED SO THAT ANY INPUT SHOULD NOT REMAIN EMPTY AND THERE IS SPECIAL CASE FOR MONOALPHABATIC//////////////////////////  
+//// THESE ARE APPLIED SO THAT ANY INPUT SHOULD NOT REMAIN EMPTY AND THERE IS SPECIAL CASE FOR MONOALPHABATIC AND HILL CIPHER//////////////////////////  
   if(this.state.plaintext===""){
     event.preventDefault()
     alert("please enter plain text")
@@ -161,16 +166,14 @@ submit_for_encryption(event) {
 
   if(this.state.technique=="monoalphabatic" || this.state.technique=="hillcipher" ){  // if tehnique is monoalphabatic, we generate key through a coded function, we dont enter key as input
   
-      if(this.state.plaintext!=="" && this.state.technique!==""){
+      if(this.state.plaintext!=="" && this.state.technique!==""){                  // same in case of hill cipher
           var for_sha_plain = this.state.plaintext
           var sha_of_plain_text = sha256(for_sha_plain)
           this.setState({sha_sender:sha_of_plain_text})
        }
 }
 
-
-
-///////////////////////////////////////////////////////////////////////////////////////////           
+   
               event.preventDefault()
 
             
@@ -1716,7 +1719,7 @@ rsa_generate_keys(event){
     }
   }
 
-  generate(250)
+  generate(256)
 
   function generate(keysize) {
     var e = bigInt(65537);
@@ -1781,7 +1784,12 @@ rsa_generate_keys(event){
  this.setState({rsapubkey:l})
  this.setState({rsa_pri_key:m})
  
+ const secretKey = 'AUBsLQhpSElD5LpLPB1p5JfwYHRIWjrsL+jJkHpBzyt+a1zqQLnX2ovt3czYD3TLU8MBE8MzEkhETP/H6y2ETA==';
+                  
+ const publicKey = 'fmtc6kC519qL7d3M2A90y1PDARPDMxJIREz/x+sthEw=';
 
+ this.setState({rsa_sender_private_key:secretKey})
+ this.setState({rsa_sender_pub_key:publicKey})
 
 
  //console.log(exp)
@@ -1843,11 +1851,11 @@ rsa_encryption(event){
   this.setState({rsa_cipher_text:encrypted_message})
   //console.log(typeof(encrypted_message)+"here is type")
   this.setState({mod:mod})
-
+/////////////////// DIGITAL SIGNATURE FOR RSA IMPLIMENTED BELOW//////////////////////////////
   const signer = require('nacl-signature');
 
                   const secretKey = 'AUBsLQhpSElD5LpLPB1p5JfwYHRIWjrsL+jJkHpBzyt+a1zqQLnX2ovt3czYD3TLU8MBE8MzEkhETP/H6y2ETA==';
-         
+                  
                   const publicKey = 'fmtc6kC519qL7d3M2A90y1PDARPDMxJIREz/x+sthEw=';
          
                   var cipher_to_sign = encrypted_message
@@ -1864,6 +1872,7 @@ rsa_send(event){
   
   event.preventDefault()
   this.setState({rsa_receiver_cipher:this.state.rsa_cipher_text})
+  this.setState({rec_signature:this.state.generated_signature})
 
 }
 
@@ -1885,6 +1894,7 @@ const signer = require('nacl-signature');
                  var signature = this.state.generated_signature.toString()
                   if (signer.verify(cipher_to_check, signature, publi)){
                 console.log('Signature is valid!');
+                this.setState({sig_verify:'Signature is valid!'})
                } else {console.log("not valid")}
   var decrypted_message =""
   var plain=""
@@ -2098,6 +2108,8 @@ this.setState({alice_sec_key:sec})
               rsa_encrypt={this.rsa_encryption}
               rsa_cipher={this.state.rsa_cipher_text}
               rsa_send={this.rsa_send}
+              pri={this.state.rsa_sender_private_key}
+              sig={this.state.generated_signature}
             
               ></RSA_SENDER>
          </div>
@@ -2110,6 +2122,9 @@ this.setState({alice_sec_key:sec})
              cipher={this.state.rsa_receiver_cipher}
              decrypt={this.rsa_decrypt}
              plain={this.state.rsa_decrypted_cipher}
+             pub={this.state.rsa_sender_pub_key}
+             dig={this.state.rec_signature}
+             verify={this.state.sig_verify}
             
              ></RSA_RECEIVER>
          </div>

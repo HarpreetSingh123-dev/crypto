@@ -18,19 +18,40 @@ function RSAsender(props) {
                         </div>
 
                         <div>
-                            <label for="public_key"><b>PUBLIC KEY:</b>{props.pub}</label>
+                            <label for="public_key"><b>PRIVATE KEY OF SENDER BELOW:</b></label>
+                          <div style={{'width':'600px','word-wrap':'break-word' }}>{props.pri}</div>
+                        </div>
+
+                        <div>
+                            <label for="public_key"><b>PUBLIC KEY OF RECEIVER BELOW:</b></label>
+                            <div style={{'width':'600px','word-wrap':'break-word' }}>{props.pub}</div>
                         </div>
   
+                        
+                        <div class="form-group">
                         <div>
                         <button  class="btn btn-primary" onClick={props.rsa_encrypt}>ENCRYPT</button>
                         </div>
+                        </div>
 
+                        <div class="form-group">
                         <div>
                         <button  class="btn btn-primary" onClick={props.rsa_send}>SEND</button>
                         </div>
+                        </div>
 
+                        <div class="form-group">
                         <div>
-                        <label for="rsa_cipher"><b>CIPHER TEXT:</b>{props.rsa_cipher}</label>
+                        <label for="rsa_cipher"><b>CIPHER TEXT BELOW:</b></label>
+                        <div style={{'width':'600px','word-wrap':'break-word' }}>{props.rsa_cipher}</div>
+                        </div>
+                        </div>
+
+                        <div class="form-group">
+                        <div>
+                        <label for="rsa_cipher"><b>DIGITAL SIGNATURE GENERATED BELOW:</b></label>
+                        <div style={{'width':'600px','word-wrap':'break-word' }}>{props.sig}</div>
+                        </div>
                         </div>
             </form>            
             </div>
